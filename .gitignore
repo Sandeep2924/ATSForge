@@ -1,0 +1,58 @@
+# Dependencies & Virtual Environments
+node_modules/
+frontend/node_modules/
+venv/
+backend/venv/
+.venv/
+env/
+ENV/
+
+# Production & Build Output
+dist/
+frontend/dist/
+build/
+*.egg-info/
+
+# Environment Variables & Secrets (NEVER COMMIT)
+.env
+.env.*
+backend/.env
+backend/.env.*
+!.env.example
+!backend/.env.example
+
+# Python Caches & Bytecode
+__pycache__/
+backend/__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Testing & Coverage
+.coverage
+htmlcov/
+.pytest_cache/
+frontend/coverage/
+
+# Logs & Temporary Files
+*.log
+*.tmp
+*.bak
+*.swp
+*.swo
+
+# Operating System Files
+.DS_Store
+.DS_Store?
+._*
+Thumbs.db
+ehthumbs.db
+
+# IDE & Editor Files
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace

@@ -1,0 +1,659 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Merriweather:wght@300;400;700&display=swap');
+
+:root {
+  /* Premium SaaS Light Theme */
+  --bg-app: #f4f4f5;
+  --bg-surface: #ffffff;
+  --bg-panel: #fafafa;
+  
+  --primary-color: #000000;
+  --primary-hover: #27272a;
+  
+  --text-main: #18181b;
+  --text-muted: #71717a;
+  --text-light: #a1a1aa;
+  
+  --border-light: #e4e4e7;
+  --border-focus: #000000;
+  
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
+  
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -4px rgba(0, 0, 0, 0.05);
+  --shadow-paper: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  background-color: var(--bg-app);
+  color: var(--text-main);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #d4d4d8; border-radius: 10px; }
+::-webkit-scrollbar-thumb:hover { background: #a1a1aa; }
+
+.app-layout {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* Header */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 2rem;
+  background-color: var(--bg-surface);
+  border-bottom: 1px solid var(--border-light);
+  z-index: 20;
+}
+
+.logo {
+  font-size: 1.25rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--text-main);
+}
+
+/* Workspace */
+.workspace {
+  display: flex;
+  flex: 1;
+  height: calc(100vh - 65px);
+  overflow: hidden;
+}
+
+/* Editor Panel */
+.editor-panel {
+  width: 500px;
+  min-width: 400px;
+  background-color: var(--bg-surface);
+  border-right: 1px solid var(--border-light);
+  padding: 2rem;
+  overflow-y: auto;
+  box-shadow: 2px 0 10px rgba(0,0,0,0.02);
+  z-index: 10;
+}
+
+.editor-section {
+  margin-bottom: 3rem;
+}
+
+.section-title {
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-muted);
+  margin-bottom: 1.5rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--border-light);
+}
+
+/* Form Elements */
+.form-group {
+  margin-bottom: 1.25rem;
+}
+
+label {
+  display: block;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--text-main);
+  margin-bottom: 0.4rem;
+}
+
+.input-field {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  background-color: var(--bg-app);
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  font-family: inherit;
+  font-size: 0.95rem;
+  color: var(--text-main);
+  transition: all 0.2s ease;
+}
+
+.input-field::placeholder {
+  color: var(--text-light);
+}
+
+.input-field:hover {
+  border-color: var(--border-light);
+}
+
+.input-field:focus {
+  outline: none;
+  background-color: var(--bg-surface);
+  border-color: var(--border-focus);
+  box-shadow: 0 0 0 1px var(--border-focus);
+}
+
+textarea.input-field {
+  resize: vertical;
+  min-height: 100px;
+  line-height: 1.5;
+}
+
+/* Dynamic Cards for Experience/Education */
+.dynamic-card {
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-md);
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+  box-shadow: var(--shadow-sm);
+  transition: box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.dynamic-card:focus-within {
+  border-color: var(--border-focus);
+  box-shadow: var(--shadow-md);
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.25rem;
+}
+
+/* Buttons */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.6rem 1.2rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: 1px solid var(--border-light);
+  background-color: var(--bg-surface);
+  color: var(--text-main);
+}
+
+.btn:hover {
+  background-color: var(--bg-app);
+  border-color: #d4d4d8;
+}
+
+.btn-primary {
+  background-color: var(--primary-color);
+  color: white;
+  border: 1px solid var(--primary-color);
+}
+
+.btn-primary:hover {
+  background-color: var(--primary-hover);
+  border-color: var(--primary-hover);
+}
+
+.btn-primary:disabled {
+  opacity: 0.7;
+  cursor: wait;
+}
+
+.btn-outline {
+  width: 100%;
+  border-style: dashed;
+  color: var(--text-muted);
+}
+.btn-outline:hover {
+  color: var(--text-main);
+  border-color: var(--text-main);
+  border-style: solid;
+}
+
+.btn-icon {
+  padding: 0.4rem;
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+}
+.btn-icon:hover {
+  color: #ef4444;
+  background: #fee2e2;
+}
+
+/* --------------------------------------
+   Resume ATS Preview Panel
+   Perfect rendering of the A4/Letter page
+---------------------------------------*/
+.preview-panel {
+  flex: 1;
+  background-color: var(--bg-app);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 1.5rem 1rem 4rem;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+/* Preview Toolbar */
+.preview-toolbar {
+  width: 8.5in;
+  max-width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.75rem;
+}
+
+.toolbar-label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-muted);
+}
+
+.density-btn {
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.35rem 0.75rem;
+  border-radius: 9999px;
+  border: 1px solid #d4d4d8;
+  background: white;
+  color: var(--text-main);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.density-btn.active {
+  background: #18181b;
+  color: white;
+  border-color: #18181b;
+}
+
+.density-btn:hover {
+  opacity: 0.9;
+}
+
+.resume-document {
+  width: 8.5in;
+  min-height: 11in;
+  height: auto;
+  background-color: #ffffff;
+  color: #000000;
+  font-family: 'Merriweather', 'Times New Roman', serif;
+  padding: 0.5in 0.5in;
+  box-shadow: var(--shadow-paper);
+  line-height: 1.25;
+  flex-shrink: 0;
+  box-sizing: border-box;
+  position: relative;
+  margin: 0 auto;
+}
+
+/* 1-Page Cutoff Guide */
+.page-boundary-guide {
+  position: absolute;
+  top: 11in;
+  left: 0;
+  right: 0;
+  border-top: 2px dashed #f87171;
+  display: flex;
+  justify-content: flex-end;
+  pointer-events: none;
+  z-index: 10;
+}
+
+.page-boundary-tag {
+  background-color: #f87171;
+  color: white;
+  font-size: 0.65rem;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 0 0 0 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* ATS Headers matching standard formatting */
+.ats-name {
+  font-size: 20pt;
+  font-weight: 700;
+  text-align: center;
+  margin-bottom: 4pt;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-family: 'Inter', sans-serif;
+}
+
+.ats-contact {
+  font-size: 9pt;
+  text-align: center;
+  margin-bottom: 14pt;
+  font-family: 'Inter', sans-serif;
+  color: #333;
+}
+
+.ats-section-title {
+  font-size: 11pt;
+  font-weight: 700;
+  text-transform: uppercase;
+  border-bottom: 1.5px solid #000;
+  margin-top: 8pt;
+  margin-bottom: 4pt;
+  padding-bottom: 2pt;
+  font-family: 'Inter', sans-serif;
+  letter-spacing: 0.03em;
+}
+
+.ats-body-text {
+  font-size: 10pt;
+  margin-bottom: 6pt;
+  text-align: justify;
+}
+
+/* Job/Project Items */
+.ats-item-block {
+  margin-bottom: 10pt;
+}
+
+.ats-item-header {
+  display: flex;
+  justify-content: space-between;
+  font-size: 10.5pt;
+  font-weight: 700;
+  margin-bottom: 2pt;
+}
+
+.ats-item-sub {
+  display: flex;
+  justify-content: space-between;
+  font-size: 10pt;
+  font-style: italic;
+  margin-bottom: 4pt;
+  color: #333;
+}
+
+.ats-bullets {
+  padding-left: 18pt;
+  margin-bottom: 6pt;
+  font-size: 10pt;
+}
+
+.ats-bullets li {
+  margin-bottom: 2pt;
+  line-height: 1.25;
+}
+
+/* --------------------------------------
+   Strict 1-Page Compact Fit Mode
+---------------------------------------*/
+.resume-document.compact-fit {
+  padding: 0.28in 0.42in;
+  font-size: 8.5pt;
+  line-height: 1.2;
+}
+
+.resume-document.compact-fit .ats-name {
+  font-size: 15pt;
+  margin-bottom: 1.5pt;
+}
+
+.resume-document.compact-fit .ats-contact {
+  font-size: 8pt;
+  margin-bottom: 5pt;
+  line-height: 1.2;
+}
+
+.resume-document.compact-fit .ats-section-title {
+  font-size: 8.75pt;
+  margin-top: 3.5pt;
+  margin-bottom: 1.5pt;
+  padding-bottom: 1pt;
+}
+
+.resume-document.compact-fit .ats-body-text {
+  font-size: 8.25pt;
+  line-height: 1.2;
+  margin-bottom: 2.5pt;
+}
+
+.resume-document.compact-fit .ats-item-block {
+  margin-bottom: 3.5pt;
+}
+
+.resume-document.compact-fit .ats-item-header {
+  font-size: 8.75pt;
+  margin-bottom: 1pt;
+}
+
+.resume-document.compact-fit .ats-item-sub {
+  font-size: 8.25pt;
+  margin-bottom: 1.5pt;
+}
+
+.resume-document.compact-fit .ats-bullets {
+  font-size: 8.25pt;
+  padding-left: 11pt;
+  margin-bottom: 2pt;
+}
+
+.resume-document.compact-fit .ats-bullets li {
+  margin-bottom: 1pt;
+  line-height: 1.22;
+}
+
+/* Compact 1-Line Education Layout */
+.ats-education-block {
+  margin-bottom: 1.5pt !important;
+}
+
+.ats-education-block .ats-item-header {
+  font-size: 8.25pt;
+  margin-bottom: 0;
+  line-height: 1.22;
+}
+
+/* Compact Wrapping Inline Certifications */
+.ats-cert-grid {
+  display: flex;
+  flex-wrap: wrap;
+  column-gap: 12pt;
+  row-gap: 2pt;
+  margin-bottom: 2.5pt;
+}
+
+.ats-cert-chip {
+  font-size: 8.25pt;
+  line-height: 1.22;
+  display: inline-flex;
+  align-items: baseline;
+}
+
+.ats-bullet-dot {
+  margin-right: 4px;
+  color: #1e3a8a;
+  font-size: 9pt;
+  font-weight: bold;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .workspace { flex-direction: column; height: auto; overflow-y: auto; }
+  .editor-panel { width: 100%; border-right: none; border-bottom: 1px solid var(--border-light); }
+  .preview-panel { padding: 1rem; }
+  .resume-document { width: 100%; min-height: auto; padding: 1.5rem; }
+}
+
+/* --------------------------------------
+   Phase 6: ATS Score Card
+---------------------------------------*/
+.ats-score-card {
+  margin-top: 1.5rem;
+  padding: 1.5rem;
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-md);
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  box-shadow: var(--shadow-sm);
+}
+
+.score-header-row {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+}
+
+.score-headline {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.score-badge {
+  display: inline-block;
+  padding: 0.25rem 0.65rem;
+  border-radius: 9999px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  width: fit-content;
+}
+
+.score-subtitle {
+  font-size: 0.825rem;
+  color: var(--text-muted);
+  margin-top: 0.25rem;
+  line-height: 1.4;
+}
+
+.sub-scores-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.75rem 1rem;
+  background: var(--bg-app);
+  padding: 1rem;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-light);
+}
+
+.sub-score-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.sub-score-info {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.775rem;
+  color: var(--text-main);
+}
+
+.progress-track {
+  width: 100%;
+  height: 6px;
+  background-color: #e2e8f0;
+  border-radius: 9999px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  border-radius: 9999px;
+  transition: width 0.4s ease;
+}
+
+.keywords-section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.score-circle {
+  width: 85px;
+  height: 85px;
+  border-radius: 50%;
+  border: 5px solid;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  background-color: var(--bg-surface);
+}
+
+.score-number {
+  font-size: 1.75rem;
+  font-weight: 700;
+  line-height: 1;
+  color: var(--text-main);
+}
+
+.score-label {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+.score-details h4, .keywords-section h4 {
+  font-size: 0.85rem;
+  margin-bottom: 0.5rem;
+  color: var(--text-main);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: 600;
+}
+
+.score-details ul {
+  padding-left: 1.25rem;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  margin-bottom: 0;
+}
+
+.score-details li {
+  margin-bottom: 0.35rem;
+  line-height: 1.4;
+}
+
+.keyword-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-top: 0.35rem;
+}
+
+.tag {
+  padding: 0.25rem 0.6rem;
+  border-radius: var(--radius-sm);
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+.tag-matched {
+  background-color: #ecfdf5;
+  color: #065f46;
+  border: 1px solid #a7f3d0;
+}
+
+.tag-missing {
+  background-color: #fef2f2;
+  color: #991b1b;
+  border: 1px solid #fecaca;
+}
