@@ -34,6 +34,10 @@ app.add_middleware(
 def read_root():
     return {"message": "Welcome to the ATSForge API"}
 
+@app.get("/health")
+def health_check():
+    return {"status": "ok", "service": "ATSForge API"}
+
 @app.post("/api/optimize")
 def optimize_resume(resume: ResumeData):
     optimized_resume = optimize_resume_with_ai(resume)
