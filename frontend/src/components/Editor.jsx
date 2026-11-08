@@ -166,17 +166,6 @@ function Editor({ resumeData, setResumeData, onNotify }) {
 
   return (
     <section className="editor-panel" id="editor-panel">
-      {/* Feature 3: Quick Section Jump Navigation */}
-      <nav className="section-jump-bar" aria-label="Quick section navigation">
-        <button type="button" className="jump-chip" onClick={() => scrollToSection('sec-optimizer')}>⚡ Optimizer</button>
-        <button type="button" className="jump-chip" onClick={() => scrollToSection('sec-profile')}>👤 Profile</button>
-        <button type="button" className="jump-chip" onClick={() => scrollToSection('sec-skills')}>🛠️ Skills</button>
-        <button type="button" className="jump-chip" onClick={() => scrollToSection('sec-experience')}>💼 Experience</button>
-        <button type="button" className="jump-chip" onClick={() => scrollToSection('sec-projects')}>🚀 Projects</button>
-        <button type="button" className="jump-chip" onClick={() => scrollToSection('sec-education')}>🎓 Education</button>
-        <button type="button" className="jump-chip" onClick={() => scrollToSection('sec-additional')}>📜 Certs</button>
-      </nav>
-
       {/* Feature 16: Form Error State Alert */}
       {errorMessage && (
         <div className="form-error-banner" role="alert">

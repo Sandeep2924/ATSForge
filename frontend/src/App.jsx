@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import './index.css';
 import Editor from './components/Editor';
 import Preview from './components/Preview';
-import CookieBanner from './components/CookieBanner';
 import Toast from './components/Toast';
 import SettingsModal from './components/SettingsModal';
 import FaqModal from './components/FaqModal';
@@ -17,11 +16,6 @@ function App() {
     } catch {
       return DEFAULT_RESUME_DATA;
     }
-  });
-
-  // Feature 1: Dark Mode Toggle with persistence
-  const [theme, setTheme] = useState(() => {
-    return localStorage.getItem('atsforge_theme') || 'light';
   });
 
   // Feature 5: Mobile View Switcher ('editor' | 'preview')
@@ -68,13 +62,6 @@ function App() {
   // Modal visibility states
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [isFaqOpen, setIsFaqOpen] = useState(false);
-
-  // Toggle Dark Mode
-  const toggleTheme = () => {
-    const nextTheme = theme === 'light' ? 'dark' : 'light';
-    setTheme(nextTheme);
-    localStorage.setItem('atsforge_theme', nextTheme);
-  };
 
   // Feature 8: Track editor scroll progress
   const handleScroll = (e) => {
@@ -227,7 +214,7 @@ function App() {
   };
 
   return (
-    <div className="app-layout" data-theme={theme}>
+    <div className="app-layout">
       {/* Feature 12: Skip to Content (Accessibility) */}
       <a href="#editor-panel" className="skip-link">Skip to editor content</a>
 
@@ -310,17 +297,6 @@ function App() {
           >
             ⚙️
           </button>
-
-          {/* Feature 1: Dark Mode Toggle */}
-          <button
-            type="button"
-            className="btn-icon theme-toggle-btn"
-            onClick={toggleTheme}
-            title={theme === 'light' ? 'Switch to Dark Mode' : 'Switch to Light Mode'}
-            aria-label={theme === 'light' ? 'Switch to Dark Mode' : 'Switch to Light Mode'}
-          >
-            {theme === 'light' ? '🌙' : '☀️'}
-          </button>
         </nav>
       </header>
 
@@ -343,9 +319,6 @@ function App() {
           />
         </div>
       </main>
-
-      {/* Feature 2: Simple Cookie / Privacy Banner */}
-      <CookieBanner />
 
       {/* Feature 15 & 16: Toast Feedback Notifications */}
       {toast && (

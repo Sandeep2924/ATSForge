@@ -26,28 +26,6 @@
   --shadow-paper: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
 }
 
-/* Feature 1: Dark Mode Theme Variables */
-[data-theme="dark"] {
-  --bg-app: #09090b;
-  --bg-surface: #18181b;
-  --bg-panel: #121215;
-  
-  --primary-color: #3b82f6;
-  --primary-hover: #2563eb;
-  
-  --text-main: #f4f4f5;
-  --text-muted: #a1a1aa;
-  --text-light: #71717a;
-  
-  --border-light: #27272a;
-  --border-focus: #3b82f6;
-  
-  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.5);
-  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
-  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.6);
-  --shadow-paper: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
-}
-
 * {
   box-sizing: border-box;
   margin: 0;
@@ -68,8 +46,6 @@ body {
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: #d4d4d8; border-radius: 10px; }
 ::-webkit-scrollbar-thumb:hover { background: #a1a1aa; }
-[data-theme="dark"] ::-webkit-scrollbar-thumb { background: #3f3f46; }
-[data-theme="dark"] ::-webkit-scrollbar-thumb:hover { background: #52525b; }
 
 /* Feature 12: Skip to Content */
 .skip-link {
@@ -195,10 +171,6 @@ body {
   transform: translateY(0);
 }
 
-[data-theme="dark"] .btn:hover {
-  border-color: #3f3f46;
-}
-
 .btn-primary {
   background-color: var(--primary-color);
   color: white;
@@ -290,39 +262,6 @@ body {
   transition: background-color 0.2s ease;
 }
 
-/* Feature 3: Quick Section Jump Navigation */
-.section-jump-bar {
-  position: sticky;
-  top: 0;
-  background: var(--bg-surface);
-  padding: 0.75rem 1.5rem 0.5rem;
-  display: flex;
-  gap: 0.35rem;
-  overflow-x: auto;
-  z-index: 15;
-  border-bottom: 1px solid var(--border-light);
-  white-space: nowrap;
-}
-
-.jump-chip {
-  font-size: 0.72rem;
-  font-weight: 600;
-  padding: 0.25rem 0.6rem;
-  border-radius: 9999px;
-  background: var(--bg-app);
-  border: 1px solid var(--border-light);
-  color: var(--text-muted);
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.jump-chip:hover {
-  background: var(--text-main);
-  color: var(--bg-surface);
-  border-color: var(--text-main);
-  transform: translateY(-1px);
-}
-
 /* Editor Panel Inner Layout */
 .editor-panel {
   padding: 1.5rem 1.5rem 4rem;
@@ -358,12 +297,6 @@ body {
   font-size: 0.85rem;
 }
 
-[data-theme="dark"] .form-error-banner {
-  background-color: #450a0a;
-  border-color: #7f1d1d;
-  color: #fca5a5;
-}
-
 .error-close-btn {
   background: transparent;
   border: none;
@@ -383,11 +316,6 @@ body {
   flex-direction: column;
   gap: 0.75rem;
   animation: pulse-border 2s infinite ease-in-out;
-}
-
-[data-theme="dark"] .ai-loading-card {
-  border-color: #1e3a8a;
-  background: linear-gradient(135deg, rgba(30, 58, 138, 0.2), rgba(88, 28, 135, 0.2));
 }
 
 @keyframes pulse-border {
@@ -434,11 +362,6 @@ body {
   animation: shimmer 1.5s infinite;
 }
 
-[data-theme="dark"] .shimmer-line {
-  background: linear-gradient(90deg, #27272a 25%, #3f3f46 50%, #27272a 75%);
-  background-size: 200% 100%;
-}
-
 .line-1 { width: 100%; }
 .line-2 { width: 85%; }
 .line-3 { width: 65%; }
@@ -481,10 +404,6 @@ label {
   border-color: #d4d4d8;
 }
 
-[data-theme="dark"] .input-field:hover {
-  border-color: #52525b;
-}
-
 .input-field:focus {
   outline: none;
   background-color: var(--bg-surface);
@@ -512,10 +431,6 @@ textarea.input-field {
 .dynamic-card:hover {
   box-shadow: var(--shadow-md);
   border-color: #d4d4d8;
-}
-
-[data-theme="dark"] .dynamic-card:hover {
-  border-color: #3f3f46;
 }
 
 .dynamic-card:focus-within {
@@ -616,12 +531,6 @@ textarea.input-field {
   background: #18181b;
   color: white;
   border-color: #18181b;
-}
-
-[data-theme="dark"] .density-btn.active {
-  background: #3b82f6;
-  border-color: #3b82f6;
-  color: white;
 }
 
 /* Resume Document: Always crisp white paper */
@@ -903,10 +812,6 @@ textarea.input-field {
   overflow: hidden;
 }
 
-[data-theme="dark"] .progress-track {
-  background-color: #27272a;
-}
-
 .progress-fill {
   height: 100%;
   border-radius: 9999px;
@@ -937,70 +842,6 @@ textarea.input-field {
   background-color: #fef2f2;
   color: #991b1b;
   border: 1px solid #fecaca;
-}
-
-[data-theme="dark"] .tag-matched {
-  background-color: #064e3b;
-  color: #a7f3d0;
-  border-color: #047857;
-}
-
-[data-theme="dark"] .tag-missing {
-  background-color: #7f1d1d;
-  color: #fecaca;
-  border-color: #991b1b;
-}
-
-/* Feature 2: Simple Cookie / Privacy Banner */
-.cookie-banner {
-  position: fixed;
-  bottom: 1.5rem;
-  left: 2rem;
-  right: 2rem;
-  max-width: 650px;
-  margin: 0 auto;
-  background-color: var(--bg-surface);
-  border: 1px solid var(--border-light);
-  border-radius: var(--radius-lg);
-  padding: 1rem 1.25rem;
-  box-shadow: var(--shadow-lg);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 1rem;
-  z-index: 50;
-  animation: slide-up 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-@keyframes slide-up {
-  from { transform: translateY(100px); opacity: 0; }
-  to { transform: translateY(0); opacity: 1; }
-}
-
-.cookie-content {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-}
-
-.cookie-icon {
-  font-size: 1.5rem;
-  flex-shrink: 0;
-}
-
-.cookie-text {
-  font-size: 0.825rem;
-  color: var(--text-muted);
-  line-height: 1.4;
-}
-
-.cookie-text strong {
-  color: var(--text-main);
-}
-
-.cookie-btn {
-  font-size: 0.8rem;
-  padding: 0.4rem 0.9rem;
 }
 
 /* Feature 15 & 16: Toast Notification System */
@@ -1186,12 +1027,6 @@ textarea.input-field {
   color: #991b1b;
 }
 
-[data-theme="dark"] .confirm-box {
-  background: #450a0a;
-  border-color: #7f1d1d;
-  color: #fca5a5;
-}
-
 /* Feature 19: Expandable FAQ Accordion */
 .faq-card {
   max-width: 600px;
@@ -1211,10 +1046,6 @@ textarea.input-field {
 .faq-item.open {
   border-color: #93c5fd;
   box-shadow: var(--shadow-sm);
-}
-
-[data-theme="dark"] .faq-item.open {
-  border-color: #3b82f6;
 }
 
 .faq-question {
@@ -1290,9 +1121,7 @@ textarea.input-field {
   .header,
   .top-progress-bar,
   .editor-pane,
-  .section-jump-bar,
   .preview-toolbar,
-  .cookie-banner,
   .floating-feedback-btn,
   .toast-notification,
   .modal-backdrop,
@@ -1407,13 +1236,5 @@ textarea.input-field {
   .resume-document {
     width: 100% !important;
     min-height: auto;
-  }
-
-  .cookie-banner {
-    left: 1rem;
-    right: 1rem;
-    bottom: 1rem;
-    flex-direction: column;
-    align-items: flex-start;
   }
 }
