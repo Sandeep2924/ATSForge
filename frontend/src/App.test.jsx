@@ -6,8 +6,9 @@ import App from './App';
 describe('App Component', () => {
   it('renders the application header', () => {
     render(<App />);
-    const headerElement = screen.getByText(/ATSForge/i);
-    expect(headerElement).toBeInTheDocument();
+    const matchingElements = screen.getAllByText(/ATSForge/i);
+    expect(matchingElements.length).toBeGreaterThan(0);
+    expect(matchingElements[0]).toBeInTheDocument();
   });
 
   it('renders the upload button', () => {

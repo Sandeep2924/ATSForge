@@ -5,7 +5,7 @@ function cleanBullet(text) {
   return text.replace(/^[\s\u2022\u00B7\u25E6\u2043\u2219\u25AA\u25AB\u25CF\u25CB\u2013\u2014\-*.]+\s*/, '').trim();
 }
 
-function Preview({ resumeData }) {
+function Preview({ resumeData, onNotify }) {
   const [fitToOnePage, setFitToOnePage] = useState(true);
   const [autoScale, setAutoScale] = useState(1);
   const [userDensity, setUserDensity] = useState('auto'); // 'auto', 'compact', 'normal'
@@ -56,6 +56,46 @@ function Preview({ resumeData }) {
     };
   }, [resumeData, fitToOnePage, userDensity]);
 
+  // Feature 9: Copy Plain Text Button
+  const handleCopyPlainText = async () => {
+    try {
+      let plain = `${resumeData.full_name || ''}\n${resumeData.contact_info || ''}\n\n`;
+      if (resumeData.professional_summary) plain += `PROFESSIONAL SUMMARY\n${resumeData.professional_summary}\n\n`;
+      if (resumeData.technical_skills) plain += `TECHNICAL SKILLS\n${resumeData.technical_skills}\n\n`;
+      if (resumeData.experience?.length) {
+        plain += `PROFESSIONAL EXPERIENCE\n`;
+        resumeData.experience.forEach(exp => {
+          plain += `${exp.job_title} | ${exp.company} (${exp.date_range})\n${exp.description}\n\n`;
+        });
+      }
+      if (resumeData.projects?.length) {
+        plain += `PROJECTS\n`;
+        resumeData.projects.forEach(p => {
+          plain += `${p.name} | ${p.tech_stack}\n${p.description}\n\n`;
+        });
+      }
+      if (resumeData.education?.length) {
+        plain += `EDUCATION\n`;
+        resumeData.education.forEach(e => {
+          plain += `${e.degree} — ${e.institution} (${e.date_range})\n`;
+        });
+        plain += `\n`;
+      }
+      if (resumeData.certifications) plain += `CERTIFICATIONS & TRAINING\n${resumeData.certifications}\n\n`;
+      if (resumeData.achievements) plain += `KEY ACHIEVEMENTS & HIGHLIGHTS\n${resumeData.achievements}\n\n`;
+
+      await navigator.clipboard.writeText(plain.trim());
+      onNotify?.("Clean plain-text resume copied to clipboard!", "success");
+    } catch {
+      onNotify?.("Could not access clipboard.", "error");
+    }
+  };
+
+  // Feature 10: Print Button
+  const handlePrint = () => {
+    window.print();
+  };
+
   // Extract certifications into clean items (handles newlines, middle dots, bullets, or semicolons)
   const certItems = resumeData.certifications
     ? resumeData.certifications
@@ -65,25 +105,48 @@ function Preview({ resumeData }) {
     : [];
 
   return (
-    <section className="preview-panel">
-      {/* Viewport Control Bar */}
+    <section className="preview-panel" id="preview-panel">
+      {/* Feature 11: Sticky Viewport Control Bar */}
       <div className="preview-toolbar">
-        <span className="toolbar-label">
-          Resume Preview 
-          {fitToOnePage && (
-            <span style={{ marginLeft: '8px', fontSize: '0.72rem', color: '#16a34a', fontWeight: 'bold' }}>
-              ✓ Strict 1-Page ({Math.round(autoScale * 100)}% Fit — All Sections Visible)
-            </span>
-          )}
-        </span>
-        <div className="toolbar-actions" style={{ display: 'flex', gap: '6px' }}>
+        <div className="toolbar-left">
+          <span className="toolbar-label">
+            Resume Preview 
+            {fitToOnePage && (
+              <span style={{ marginLeft: '8px', fontSize: '0.72rem', color: '#16a34a', fontWeight: 'bold' }}>
+                ✓ Strict 1-Page ({Math.round(autoScale * 100)}% Fit)
+              </span>
+            )}
+          </span>
+        </div>
+
+        <div className="toolbar-actions">
+          {/* Feature 9: Copy plain text button */}
+          <button
+            type="button"
+            className="density-btn toolbar-icon-btn"
+            onClick={handleCopyPlainText}
+            title="Copy formatted plain text resume to clipboard"
+          >
+            📋 Copy Text
+          </button>
+
+          {/* Feature 10: Print button */}
+          <button
+            type="button"
+            className="density-btn toolbar-icon-btn"
+            onClick={handlePrint}
+            title="Print or Save to PDF via system print dialog (Ctrl+P)"
+          >
+            🖨️ Print
+          </button>
+
           <button 
             type="button"
             className={`density-btn ${fitToOnePage && userDensity === 'auto' ? 'active' : ''}`}
             onClick={() => { setFitToOnePage(true); setUserDensity('auto'); }}
             title="Automatically scale to guarantee 100% of sections fit on a single page"
           >
-            ⚡ Auto-Fit 1-Page
+            ⚡ Auto-Fit
           </button>
           <button 
             type="button"
@@ -91,7 +154,7 @@ function Preview({ resumeData }) {
             onClick={() => { setFitToOnePage(true); setUserDensity('compact'); }}
             title="Compact 90% view"
           >
-            Compact (90%)
+            90%
           </button>
           <button 
             type="button"
@@ -99,7 +162,7 @@ function Preview({ resumeData }) {
             onClick={() => { setFitToOnePage(false); setUserDensity('normal'); }}
             title="Full 100% standard size"
           >
-            Standard (100%)
+            100%
           </button>
         </div>
       </div>

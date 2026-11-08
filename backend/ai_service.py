@@ -6,14 +6,20 @@ from google.genai import types
 from models import ResumeData
 from dotenv import load_dotenv
 
-load_dotenv()
+dotenv_path = os.path.join(os.path.dirname(__file__), ".env")
+load_dotenv(dotenv_path)
 
-# Initialize official Gemini client
-client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
+def get_gemini_client():
+    api_key = os.getenv("GEMINI_API_KEY")
+    if not api_key:
+        raise ValueError("GEMINI_API_KEY environment variable is missing. Please set it in backend/.env")
+    return genai.Client(api_key=api_key)
+
 MODELS_TO_TRY = ["gemini-flash-lite-latest", "gemini-3.1-flash-lite", "gemini-3.7-flash", "gemini-3.8-flash"]
 
 def _generate_with_retry(prompt: str, temperature: float = 0.1) -> str:
     """Calls Gemini with primary model and falls back automatically if needed."""
+    client = get_gemini_client()
     config = types.GenerateContentConfig(
         response_mime_type="application/json",
         temperature=temperature,

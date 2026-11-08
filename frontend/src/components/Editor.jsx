@@ -1,12 +1,27 @@
 import React, { useState } from 'react';
 
-function Editor({ resumeData, setResumeData }) {
+function Editor({ resumeData, setResumeData, onNotify }) {
   const [isOptimizing, setIsOptimizing] = useState(false);
   const [isScoring, setIsScoring] = useState(false);
   const [isTailoringSkills, setIsTailoringSkills] = useState(false);
   const [tailorResultInfo, setTailorResultInfo] = useState(null);
   const [atsScoreResult, setAtsScoreResult] = useState(null);
-  
+  const [errorMessage, setErrorMessage] = useState(null);
+
+  const scrollToSection = (id) => {
+    const el = document.getElementById(id);
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  };
+
+  const scrollToTop = () => {
+    const panel = document.getElementById('editor-panel');
+    if (panel) {
+      panel.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  };
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setResumeData(prev => ({ ...prev, [name]: value }));
@@ -14,9 +29,11 @@ function Editor({ resumeData, setResumeData }) {
 
   const handleTailorSkills = async () => {
     if (!resumeData.target_job_description) {
-      alert("Please paste a Target Job Description in the optimizer section first.");
+      setErrorMessage("Please paste a Target Job Description in the AI Optimizer section first.");
+      scrollToSection('sec-optimizer');
       return;
     }
+    setErrorMessage(null);
     setIsTailoringSkills(true);
     setTailorResultInfo(null);
     try {
@@ -36,12 +53,13 @@ function Editor({ resumeData, setResumeData }) {
           elevated: result.elevated_categories,
           matched: result.matched_skills
         });
+        onNotify?.("Skills tailored with zero-hallucination guard!", "success");
       } else {
-        alert(result.message || "Failed to tailor skills.");
+        setErrorMessage(result.message || "Failed to tailor skills.");
       }
     } catch (err) {
       console.error("Error tailoring skills:", err);
-      alert("Failed to connect to backend for skill tailoring.");
+      setErrorMessage("Failed to connect to backend for skill tailoring. Please check if the server is running.");
     } finally {
       setIsTailoringSkills(false);
     }
@@ -55,15 +73,23 @@ function Editor({ resumeData, setResumeData }) {
 
   const addItem = (field, defaultObj) => {
     setResumeData({ ...resumeData, [field]: [...resumeData[field], defaultObj] });
+    onNotify?.(`Added new ${field === 'experience' ? 'role' : field === 'projects' ? 'project' : 'degree'}.`, "info");
   };
 
   const removeItem = (field, index) => {
     const newArray = [...resumeData[field]];
     newArray.splice(index, 1);
     setResumeData({ ...resumeData, [field]: newArray });
+    onNotify?.("Entry removed.", "info");
   };
 
   const handleOptimizeAI = async () => {
+    if (!resumeData.target_job_description) {
+      setErrorMessage("Please paste a Target Job Description to optimize your resume.");
+      scrollToSection('sec-optimizer');
+      return;
+    }
+    setErrorMessage(null);
     setIsOptimizing(true);
     try {
       const response = await fetch('http://localhost:8000/api/optimize', {
@@ -74,10 +100,13 @@ function Editor({ resumeData, setResumeData }) {
       const result = await response.json();
       if (result.status === 'success') {
         setResumeData(result.data);
+        onNotify?.("Resume successfully optimized for the Job Description!", "success");
+      } else {
+        setErrorMessage(result.message || "Could not optimize resume.");
       }
     } catch (error) {
       console.error("Error optimizing resume:", error);
-      alert("Failed to connect to AI Server.");
+      setErrorMessage("Failed to connect to AI server. Check backend connection.");
     } finally {
       setIsOptimizing(false);
     }
@@ -108,9 +137,11 @@ function Editor({ resumeData, setResumeData }) {
       projects: updatedProjects,
       experience: updatedExperience
     });
+    onNotify?.("Bullets budgeted to 3 max per item for strict 1-page fit!", "success");
   };
 
   const handleCalculateScore = async () => {
+    setErrorMessage(null);
     setIsScoring(true);
     try {
       const response = await fetch('http://localhost:8000/api/ats-score', {
@@ -121,26 +152,66 @@ function Editor({ resumeData, setResumeData }) {
       const result = await response.json();
       if (result.status === 'success') {
         setAtsScoreResult(result.data);
+        onNotify?.(`ATS Compatibility Score: ${result.data.score}/100`, "success");
+      } else {
+        setErrorMessage("Failed to calculate ATS score.");
       }
     } catch (error) {
       console.error("Error calculating ATS score:", error);
-      alert("Failed to calculate ATS score.");
+      setErrorMessage("Error communicating with scoring service.");
     } finally {
       setIsScoring(false);
     }
   };
 
   return (
-    <section className="editor-panel">
-      
-      <div className="editor-section" style={{ animationDelay: '0.1s' }}>
+    <section className="editor-panel" id="editor-panel">
+      {/* Feature 3: Quick Section Jump Navigation */}
+      <nav className="section-jump-bar" aria-label="Quick section navigation">
+        <button type="button" className="jump-chip" onClick={() => scrollToSection('sec-optimizer')}>⚡ Optimizer</button>
+        <button type="button" className="jump-chip" onClick={() => scrollToSection('sec-profile')}>👤 Profile</button>
+        <button type="button" className="jump-chip" onClick={() => scrollToSection('sec-skills')}>🛠️ Skills</button>
+        <button type="button" className="jump-chip" onClick={() => scrollToSection('sec-experience')}>💼 Experience</button>
+        <button type="button" className="jump-chip" onClick={() => scrollToSection('sec-projects')}>🚀 Projects</button>
+        <button type="button" className="jump-chip" onClick={() => scrollToSection('sec-education')}>🎓 Education</button>
+        <button type="button" className="jump-chip" onClick={() => scrollToSection('sec-additional')}>📜 Certs</button>
+      </nav>
+
+      {/* Feature 16: Form Error State Alert */}
+      {errorMessage && (
+        <div className="form-error-banner" role="alert">
+          <span className="error-icon">⚠️</span>
+          <span className="error-text">{errorMessage}</span>
+          <button type="button" className="error-close-btn" onClick={() => setErrorMessage(null)}>✕</button>
+        </div>
+      )}
+
+      {/* Feature 6: Loading Animation Shimmer State */}
+      {(isOptimizing || isScoring) && (
+        <div className="ai-loading-card" aria-live="polite">
+          <div className="ai-spinner"></div>
+          <div className="ai-loading-text">
+            <strong>{isOptimizing ? "Optimizing Bullets & Keywords..." : "Evaluating 4D ATS Compatibility..."}</strong>
+            <p>Analyzing job semantics with Gemini Flash models & enforcing single-page constraints.</p>
+          </div>
+          <div className="shimmer-lines">
+            <div className="shimmer-line line-1"></div>
+            <div className="shimmer-line line-2"></div>
+            <div className="shimmer-line line-3"></div>
+          </div>
+        </div>
+      )}
+
+      {/* Section 1: AI ATS Optimizer */}
+      <div className="editor-section" id="sec-optimizer">
         <h2 className="section-title">✨ AI ATS Optimizer</h2>
         <div className="form-group">
-          <label>Target Job Description</label>
+          <label htmlFor="target-jd">Target Job Description</label>
           <textarea 
+            id="target-jd"
             name="target_job_description"
             className="input-field" 
-            placeholder="Paste job description here to tailor your resume..."
+            placeholder="Paste target job description here to tailor your resume & keywords..."
             value={resumeData.target_job_description || ''}
             onChange={handleChange}
           ></textarea>
@@ -273,8 +344,9 @@ function Editor({ resumeData, setResumeData }) {
         )}
       </div>
 
-      <div className="editor-section" style={{ animationDelay: '0.2s' }}>
-        <h2 className="section-title">Profile & Skills</h2>
+      {/* Section 2: Profile */}
+      <div className="editor-section" id="sec-profile">
+        <h2 className="section-title">Profile</h2>
         <div className="form-group">
           <label>Full Name</label>
           <input type="text" name="full_name" className="input-field" value={resumeData.full_name || ''} onChange={handleChange} />
@@ -287,35 +359,38 @@ function Editor({ resumeData, setResumeData }) {
           <label>Professional Summary</label>
           <textarea name="professional_summary" className="input-field" value={resumeData.professional_summary || ''} onChange={handleChange}></textarea>
         </div>
-        <div className="form-group">
-          <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.4rem'}}>
-            <label style={{margin: 0}}>Technical Skills</label>
-            <button 
-              type="button" 
-              className="btn" 
-              style={{fontSize: '0.75rem', padding: '0.25rem 0.6rem', borderColor: '#8b5cf6', color: '#6d28d9', backgroundColor: '#f5f3ff'}}
-              onClick={handleTailorSkills}
-              disabled={isTailoringSkills}
-            >
-              {isTailoringSkills ? "Analyzing & Reordering..." : "🎯 Smart Tailor (Zero-Hallucination)"}
-            </button>
-          </div>
-
-          {tailorResultInfo && (
-            <div style={{fontSize: '0.78rem', padding: '0.5rem 0.75rem', background: '#f5f3ff', border: '1px solid #ddd6fe', borderRadius: 'var(--radius-sm)', marginBottom: '0.5rem', color: '#5b21b6', lineHeight: 1.4}}>
-              <strong>Target Role:</strong> {tailorResultInfo.role}.<br/>
-              {tailorResultInfo.elevated && tailorResultInfo.elevated.length > 0 && (
-                <span><strong>Priority Elevated:</strong> {tailorResultInfo.elevated.join(', ')} moved to top.<br/></span>
-              )}
-              <span style={{color: '#4c1d95'}}>✓ <strong>Zero-Hallucination Guard:</strong> Only candidate's verified skills were reordered and highlighted.</span>
-            </div>
-          )}
-
-          <textarea name="technical_skills" className="input-field" value={resumeData.technical_skills || ''} onChange={handleChange}></textarea>
-        </div>
       </div>
 
-      <div className="editor-section" style={{ animationDelay: '0.3s' }}>
+      {/* Section 3: Technical Skills */}
+      <div className="editor-section" id="sec-skills">
+        <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem'}}>
+          <h2 className="section-title" style={{margin: 0}}>Technical Skills</h2>
+          <button 
+            type="button" 
+            className="btn" 
+            style={{fontSize: '0.75rem', padding: '0.25rem 0.6rem', borderColor: '#8b5cf6', color: '#6d28d9', backgroundColor: '#f5f3ff'}}
+            onClick={handleTailorSkills}
+            disabled={isTailoringSkills}
+          >
+            {isTailoringSkills ? "Analyzing & Reordering..." : "🎯 Smart Tailor (Zero-Hallucination)"}
+          </button>
+        </div>
+
+        {tailorResultInfo && (
+          <div style={{fontSize: '0.78rem', padding: '0.5rem 0.75rem', background: '#f5f3ff', border: '1px solid #ddd6fe', borderRadius: 'var(--radius-sm)', marginBottom: '0.5rem', color: '#5b21b6', lineHeight: 1.4}}>
+            <strong>Target Role:</strong> {tailorResultInfo.role}.<br/>
+            {tailorResultInfo.elevated && tailorResultInfo.elevated.length > 0 && (
+              <span><strong>Priority Elevated:</strong> {tailorResultInfo.elevated.join(', ')} moved to top.<br/></span>
+            )}
+            <span style={{color: '#4c1d95'}}>✓ <strong>Zero-Hallucination Guard:</strong> Only candidate's verified skills were reordered and highlighted.</span>
+          </div>
+        )}
+
+        <textarea name="technical_skills" className="input-field" value={resumeData.technical_skills || ''} onChange={handleChange}></textarea>
+      </div>
+
+      {/* Section 4: Experience */}
+      <div className="editor-section" id="sec-experience">
         <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem'}}>
           <h2 className="section-title" style={{margin: 0}}>Experience</h2>
           <span style={{fontSize: '0.75rem', color: 'var(--text-muted)', background: 'var(--bg-app)', padding: '0.2rem 0.5rem', borderRadius: '4px'}}>
@@ -326,7 +401,7 @@ function Editor({ resumeData, setResumeData }) {
           <div className="dynamic-card" key={index}>
             <div className="card-header">
               <label style={{margin:0}}>Role {index + 1}</label>
-              <button className="btn btn-icon" onClick={() => removeItem('experience', index)}>🗑️</button>
+              <button className="btn btn-icon" onClick={() => removeItem('experience', index)} title="Delete Role">🗑️</button>
             </div>
             <div className="form-group"><input type="text" className="input-field" placeholder="Job Title" value={exp.job_title || ''} onChange={(e) => handleArrayChange('experience', index, 'job_title', e.target.value)} /></div>
             <div className="form-group"><input type="text" className="input-field" placeholder="Company" value={exp.company || ''} onChange={(e) => handleArrayChange('experience', index, 'company', e.target.value)} /></div>
@@ -340,7 +415,8 @@ function Editor({ resumeData, setResumeData }) {
         <button className="btn btn-outline" onClick={() => addItem('experience', { company: '', location: '', job_title: '', description: '', date_range: '' })}>+ Add Experience</button>
       </div>
 
-      <div className="editor-section" style={{ animationDelay: '0.4s' }}>
+      {/* Section 5: Projects */}
+      <div className="editor-section" id="sec-projects">
         <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem'}}>
           <h2 className="section-title" style={{margin: 0}}>Projects</h2>
           <span style={{fontSize: '0.75rem', color: 'var(--text-muted)', background: 'var(--bg-app)', padding: '0.2rem 0.5rem', borderRadius: '4px'}}>
@@ -351,7 +427,7 @@ function Editor({ resumeData, setResumeData }) {
           <div className="dynamic-card" key={index}>
             <div className="card-header">
               <label style={{margin:0}}>Project {index + 1}</label>
-              <button className="btn btn-icon" onClick={() => removeItem('projects', index)}>🗑️</button>
+              <button className="btn btn-icon" onClick={() => removeItem('projects', index)} title="Delete Project">🗑️</button>
             </div>
             <div className="form-group"><input type="text" className="input-field" placeholder="Project Name" value={proj.name || ''} onChange={(e) => handleArrayChange('projects', index, 'name', e.target.value)} /></div>
             <div className="form-group"><input type="text" className="input-field" placeholder="Tech Stack" value={proj.tech_stack || ''} onChange={(e) => handleArrayChange('projects', index, 'tech_stack', e.target.value)} /></div>
@@ -364,13 +440,14 @@ function Editor({ resumeData, setResumeData }) {
         <button className="btn btn-outline" onClick={() => addItem('projects', { name: '', tech_stack: '', link: '', description: '' })}>+ Add Project</button>
       </div>
 
-      <div className="editor-section" style={{ animationDelay: '0.5s' }}>
+      {/* Section 6: Education */}
+      <div className="editor-section" id="sec-education">
         <h2 className="section-title">Education</h2>
         {(resumeData.education || []).map((edu, index) => (
           <div className="dynamic-card" key={index}>
             <div className="card-header">
               <label style={{margin:0}}>Education {index + 1}</label>
-              <button className="btn btn-icon" onClick={() => removeItem('education', index)}>🗑️</button>
+              <button className="btn btn-icon" onClick={() => removeItem('education', index)} title="Delete Education">🗑️</button>
             </div>
             <div className="form-group"><input type="text" className="input-field" placeholder="Degree" value={edu.degree || ''} onChange={(e) => handleArrayChange('education', index, 'degree', e.target.value)} /></div>
             <div className="form-group"><input type="text" className="input-field" placeholder="Institution" value={edu.institution || ''} onChange={(e) => handleArrayChange('education', index, 'institution', e.target.value)} /></div>
@@ -381,8 +458,9 @@ function Editor({ resumeData, setResumeData }) {
         <button className="btn btn-outline" onClick={() => addItem('education', { degree: '', institution: '', date_range: '', gpa: '' })}>+ Add Education</button>
       </div>
 
-      <div className="editor-section" style={{ animationDelay: '0.6s' }}>
-        <h2 className="section-title">Additional Info</h2>
+      {/* Section 7: Additional Info */}
+      <div className="editor-section" id="sec-additional">
+        <h2 className="section-title">Certifications & Highlights</h2>
         <div className="form-group">
           <label>Certifications & Training</label>
           <textarea name="certifications" className="input-field" value={resumeData.certifications || ''} onChange={handleChange}></textarea>
@@ -392,7 +470,17 @@ function Editor({ resumeData, setResumeData }) {
           <textarea name="achievements" className="input-field" value={resumeData.achievements || ''} onChange={handleChange}></textarea>
         </div>
       </div>
-      
+
+      {/* Feature 4: Back to Top Floating Button in Editor */}
+      <button 
+        type="button" 
+        className="editor-back-to-top" 
+        onClick={scrollToTop}
+        title="Scroll back to top of editor"
+        aria-label="Back to top"
+      >
+        ↑ Top
+      </button>
     </section>
   );
 }
